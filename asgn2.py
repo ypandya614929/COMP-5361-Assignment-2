@@ -171,7 +171,7 @@ def is_valid_expression(validation_expr_list=[]):
                         break
                 else:
                     operators_count -= 1
-            else:
+            elif not is_operator(exp):
                 operators_count += 1
             if operators_count not in [0, 1]:
                 break
@@ -322,11 +322,11 @@ class Equivalency:
                 assign_val = (row_count // (table_length // (2**(var_count+1)))) % 2 == 1
                 self.update_variable_dict(var_name, assign_val)
             for key, val in sorted(self.get_variable_dict().items()):
-                print('{:<10}'.format(PRINT_VALUE.get(val)), end=' ')
-            print('{:<5}'.format('|'), end=' ')
+                print('{:<8}'.format(PRINT_VALUE.get(val)), end=' ')
+            print('{:<4}'.format('|'), end=' ')
             result = self.evaluate_expression(self.get_postfix_expr_list())
             result_list.append(result)
-            print('{:<10}'.format(PRINT_VALUE.get(result)))
+            print('{:<8}'.format(PRINT_VALUE.get(result)))
         result_set = set(result_list)
         expr_equivalency = "Contingency"
         if len(result_set) == 1:
@@ -341,23 +341,24 @@ if __name__ == '__main__':
 
     is_exit = False
     while not is_exit:
-        print('COMP-5361 Assignment-2 Menu')
+        print('\nCOMP-5361 Assignment-2 Menu')
         print("-------------------------------------------------------")
         print('1. Produce output from truth assignments')
         print('2. Display truth table and propositional equivalences')
-        print('3. Exit')
+        print('3. Exit\n')
 
         choice = input('Select: ')
 
         choice = choice.strip()
         if choice in ["1", 1, "2", 2]:
-            expr = input("Please enter valid propositional logic equation : ")
+            expr = input("\nPlease enter valid propositional logic equation : ")
             for op in LIST_OF_OPERATORS:
                 expr = expr.replace(op, " " + op + " ")
             input_expr_list = expr.replace(")", " ) ").replace("(", " ( ").split()
             if not is_valid_expression(input_expr_list):
-                print("===== Invalid input =====")
+                print("\n========== Invalid input ==========")
                 continue
+            print()
             expr_instance = Equivalency()
             expr_instance.generate_expression(input_expr_list)
             updated_expr_list = expr_instance.get_postfix_expr_list()
@@ -378,24 +379,25 @@ if __name__ == '__main__':
                             calculation_instance.update_variable_dict(key, val)
                             is_valid_input = True
                         else:
-                            print("===== Invalid input =====")
+                            print("\n========== Invalid input ==========")
                 expr_val = calculation_instance.evaluate_expression(updated_expr_list)
-                print("=============================================================================================")
+                print()
+                print("===============================================================================================")
                 print("The value of expression {} : {}".format(" ".join(input_expr_list), expr_val))
-                print("=============================================================================================\n")
+                print("===============================================================================================")
             elif choice in ["2", 2]:
-                print("=============================================================================================")
+                print("===============================================================================================")
                 for key in sorted(expr_instance.get_variable_dict()):
-                    print('{:<10}'.format(key), end=' ')
-                print('{:<5}'.format('|'), end=' ')
-                print('{:<5}'.format(" ".join(input_expr_list)))
-                print("=============================================================================================")
+                    print('{:<8}'.format(key), end=' ')
+                print('{:<4}'.format('|'), end=' ')
+                print('{:<4}'.format(" ".join(input_expr_list)))
+                print("===============================================================================================")
                 calculation_instance.variable_dict = expr_instance.get_variable_dict()
                 equivalency = calculation_instance.calculate_truth_table_and_equivalence()
-                print("=============================================================================================")
+                print("===============================================================================================")
                 print("Solution : ", equivalency)
-                print("=============================================================================================\n")
+                print("===============================================================================================")
         elif choice in ["3", 3]:
             is_exit = True
         else:
-            print("===== Please select valid option =====")
+            print("\n========== Please select valid option ==========")
