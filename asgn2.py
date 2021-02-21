@@ -172,8 +172,7 @@ class Stack:
             equivalency = "Tautology"
             if not result_set.pop():
                 equivalency = "Contradiction"
-        print("=============================================================================================")
-        print("Solution : ", equivalency)
+        return  equivalency
 
 
 # python main method
@@ -228,7 +227,9 @@ if __name__ == '__main__':
                 print('{:<5}'.format(" ".join(input_expr_list)))
                 print("=============================================================================================")
                 calculation_stack.variable_dict = expr_stack.get_variable_dict()
-                calculation_stack.calculate_truth_table_and_equivalence()
+                equivalency = calculation_stack.calculate_truth_table_and_equivalence()
+                print("=============================================================================================")
+                print("Solution : ", equivalency)
                 print("=============================================================================================\n")
         elif choice in ["3", 3]:
             is_exit = True
