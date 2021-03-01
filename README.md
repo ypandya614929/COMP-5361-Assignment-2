@@ -43,20 +43,21 @@ COMP-5361-Assignment-2
         
     - And, for choice 2 below result will be displayed.
         
-        ===============================================================================================
-        A        B        C        |    ( ( A ∧ B ) => C )
-        ===============================================================================================
-        False    False    False    |    True    
-        False    False    True     |    True    
-        False    True     False    |    True    
-        False    True     True     |    True    
-        True     False    False    |    True    
-        True     False    True     |    True    
-        True     True     False    |    False   
-        True     True     True     |    True    
-        ===============================================================================================
+        ====    ====    ====    ==========      =================
+        A       B       C       (A ∧ B)         ((A ∧ B) => C)   
+        ====    ====    ====    ==========      =================
+        False   False   False   False           True             
+        False   False   True    False           True             
+        False   True    False   False           True             
+        False   True    True    False           True             
+        True    False   False   False           True             
+        True    False   True    False           True             
+        True    True    False   True            False            
+        True    True    True    True            True             
+        =======================================================
         Solution :  Contingency
-        ===============================================================================================
+        =======================================================
+
 
 
 # Test cases
@@ -94,16 +95,16 @@ COMP-5361-Assignment-2
 
     Please enter valid propositional logic equation : (¬P1 ∧ (P1 ∨ P2)) → P2
 
-    ===============================================================================================
-    P1       P2       |    ( ¬ P1 ∧ ( P1 ∨ P2 ) ) → P2
-    ===============================================================================================
-    False    False    |    True    
-    False    True     |    True    
-    True     False    |    True    
-    True     True     |    True    
-    ===============================================================================================
+    =====   =====   ======  ============    ====================    ===========================
+    P1      P2      ¬P1     (P1 ∨ P2)       (¬P1 ∧ (P1 ∨ P2))       ((¬P1 ∧ (P1 ∨ P2)) → P2)   
+    =====   =====   ======  ============    ====================    ===========================
+    False   False   True    False           False                   True                       
+    False   True    True    True            True                    True                       
+    True    False   False   True            False                   True                       
+    True    True    False   True            False                   True                       
+    =======================================================
     Solution :  Tautology
-    ===============================================================================================
+    =======================================================
 
 
 #### Question 2(b)
@@ -118,16 +119,17 @@ COMP-5361-Assignment-2
 
     Please enter valid propositional logic equation : P2 ∧ (P1 → ¬P2) ∧ (¬P1 → ¬P2)
 
-    ===============================================================================================
-    P1       P2       |    P2 ∧ ( P1 → ¬ P2 ) ∧ ( ¬ P1 → ¬ P2 )
-    ===============================================================================================
-    False    False    |    False   
-    False    True     |    False   
-    True     False    |    False   
-    True     True     |    False   
-    ===============================================================================================
+    =====   =====   ======  =============   ====================    ======  ==============  ====================================
+    P1      P2      ¬P2     (P1 → ¬P2)      (P2 ∧ (P1 → ¬P2))       ¬P1     (¬P1 → ¬P2)     ((P2 ∧ (P1 → ¬P2)) ∧ (¬P1 → ¬P2))   
+    =====   =====   ======  =============   ====================    ======  ==============  ====================================
+    False   False   True    True            False                   True    True            False                               
+    False   True    False   True            True                    True    False           False                               
+    True    False   True    True            False                   False   True            False                               
+    True    True    False   False           False                   False   True            False                               
+    =======================================================
     Solution :  Contradiction
-    ===============================================================================================
+    =======================================================
+
 
 
 #### Question 2(c)
@@ -142,17 +144,18 @@ COMP-5361-Assignment-2
 
     Please enter valid propositional logic equation : (P1 → (P2 → P3)) → ((P1 → P2) → P3)
 
-    ===============================================================================================
-    P1       P2       P3       |    ( P1 → ( P2 → P3 ) ) → ( ( P1 → P2 ) → P3 )
-    ===============================================================================================
-    False    False    False    |    False   
-    False    False    True     |    True    
-    False    True     False    |    False   
-    False    True     True     |    True    
-    True     False    False    |    True    
-    True     False    True     |    True    
-    True     True     False    |    True    
-    True     True     True     |    True    
-    ===============================================================================================
+    =====   =====   =====   ============    ===================     ============    ===================     ========================================
+    P1      P2      P3      (P2 → P3)       (P1 → (P2 → P3))        (P1 → P2)       ((P1 → P2) → P3)        ((P1 → (P2 → P3)) → ((P1 → P2) → P3))   
+    =====   =====   =====   ============    ===================     ============    ===================     ========================================
+    False   False   False   True            True                    True            False                   False                                   
+    False   False   True    True            True                    True            True                    True                                    
+    False   True    False   False           True                    True            False                   False                                   
+    False   True    True    True            True                    True            True                    True                                    
+    True    False   False   True            True                    False           True                    True                                    
+    True    False   True    True            True                    False           True                    True                                    
+    True    True    False   False           False                   True            False                   True                                    
+    True    True    True    True            True                    True            True                    True                                    
+    =======================================================
     Solution :  Contingency
-    ===============================================================================================
+    =======================================================
+
