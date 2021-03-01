@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# References
+# https://stackoverflow.com/questions/53526207/how-do-i-add-a-row-of-dashes-between-the-first-two-print-lines-in-python
+# https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-56.php
+# https://rosettacode.org/wiki/Truth_table
+
+import collections
+
 # constants
 LIST_OF_OPERATORS = ["¬", "~", "!", "∧", "^", "&", "∨", "v", "|", "V", "=>", "->", "→", "↔", "⊕"]
 NEGATION_OPERATORS = ["¬", "~", "!"]
@@ -218,9 +225,13 @@ class Equivalency:
         self.stack = []
         self.postfix_expr_list = []
         self.variable_dict = {}
+        self.postfix_expr_display_list = []
 
     def push(self, elem):
         self.stack.append(elem)
+
+    def display_list_push(self, elem):
+        self.postfix_expr_display_list.append(elem)
 
     def peek(self):
         if self.is_empty():
@@ -231,6 +242,16 @@ class Equivalency:
         if self.is_empty():
             return 0
         return self.stack.pop()
+
+    def display_list_pop(self):
+        if not self.postfix_expr_display_list:
+            return 0
+        return self.postfix_expr_display_list.pop()
+
+    def display_list_peek(self):
+        if not self.postfix_expr_display_list:
+            return 0
+        return self.postfix_expr_display_list[-1]
 
     def is_empty(self):
         return self.stack == []
@@ -289,52 +310,93 @@ class Equivalency:
             self.update_postfix_expr_list(self.pop())
 
     def evaluate_expression(self, postfix_expr_list=[]):
+        result_dict = collections.OrderedDict()
         for exp in postfix_expr_list:
             if self.is_operand(exp):
+                self.display_list_push(str(exp))
                 if type(exp) != bool:
                     exp = self.get_variable_dict().get(exp)
                 self.push(exp)
             else:
                 if exp in NEGATION_OPERATORS:
                     op1 = self.pop()
-                    self.push(calculate_negation(op1))
+                    display_op1 = self.display_list_pop()
+                    val = calculate_negation(op1)
+                    self.display_list_push('{}{}'.format(exp, display_op1))
+                    result_dict.update({'{}{}'.format(exp, display_op1): val})
+                    self.push(val)
                 else:
                     op1 = self.pop()
                     op2 = self.pop()
+                    display_op1 = self.display_list_pop()
+                    display_op2 = self.display_list_pop()
                     if exp in CONJUNCTION_OPERATORS:
-                        self.push(calculate_conjunction(op1, op2))
+                        val = calculate_conjunction(op1, op2)
                     elif exp in DISJUNCTION_OPERATORS:
-                        self.push(calculate_disjunction(op1, op2))
+                        val = calculate_disjunction(op1, op2)
                     elif exp in EX_OR_OPERATORS:
-                        self.push(calculate_ex_or(op1, op2))
+                        val = calculate_ex_or(op1, op2)
                     elif exp in CONDITIONAL_OPERATORS:
-                        self.push(calculate_conditional(op1, op2))
+                        val = calculate_conditional(op1, op2)
                     elif exp in BI_CONDITIONAL_OPERATORS:
-                        self.push(calculate_bi_conditional(op1, op2))
-        return self.peek()
+                        val = calculate_bi_conditional(op1, op2)
+                    self.push(val)
+                    self.display_list_push('({} {} {})'.format(display_op2, exp, display_op1))
+                    result_dict.update({'({} {} {})'.format(display_op2, exp, display_op1): val})
+
+        result_dict.update({'final_key': self.display_list_peek()})
+        result_dict.update({'final_value': self.peek()})
+        return result_dict
 
     def calculate_truth_table_and_equivalence(self):
         variable_list = sorted(self.get_variable_dict().keys())
         table_length = 2 ** len(variable_list)
         result_list = []
+        result_dict_list = []
         for row_count in range(table_length):
+            result_dict = collections.OrderedDict()
             for var_count, var_name in enumerate(variable_list):
                 assign_val = (row_count // (table_length // (2**(var_count+1)))) % 2 == 1
                 self.update_variable_dict(var_name, assign_val)
-            for key, val in sorted(self.get_variable_dict().items()):
-                print('{:<8}'.format(PRINT_VALUE.get(val)), end=' ')
-            print('{:<4}'.format('|'), end=' ')
-            result = self.evaluate_expression(self.get_postfix_expr_list())
-            result_list.append(result)
-            print('{:<8}'.format(PRINT_VALUE.get(result)))
+                result_dict.update({var_name: assign_val})
+            result_dict.update(self.evaluate_expression(self.get_postfix_expr_list()))
+            result_dict_list.append(result_dict)
+            result_list.append(result_dict.get('final_value'))
+
+        print_list = []
+        space_list = []
+        for count, result in enumerate(result_dict_list):
+            result.pop('final_key', None)
+            result.pop('final_value', None)
+            key_list = []
+            res_list = []
+            for key, value in result.items():
+                if not count:
+                    key_list.append(key)
+                    space_list.append("="*(len(key)+3))
+            if not count:
+                print_list.append(space_list)
+                print_list.append(key_list)
+                print_list.append(space_list)
+            for key, value in result.items():
+                res_list.append(PRINT_VALUE.get(value))
+            print_list.append(res_list)
+
+        dynamic_length = [max(map(len, colmn)) for colmn in zip(*[[str(word) for word in row] for row in print_list])]
+        tab_formatted = '\t'.join('{{:{}}}'.format(var) for var in dynamic_length)
+        display_table = [tab_formatted.format(*row) for row in [[str(word) for word in row] for row in print_list]]
+        print('\n'.join(display_table))
+
         result_set = set(result_list)
         expr_equivalency = "Contingency"
         if len(result_set) == 1:
             expr_equivalency = "Tautology"
             if not result_set.pop():
                 expr_equivalency = "Contradiction"
-        return expr_equivalency
-
+        [print("=", end='') for i in range(55)]
+        print("\nSolution : ", expr_equivalency)
+        [print("=", end='') for i in range(55)]
+        print()
 
 # python main method
 if __name__ == '__main__':
@@ -379,24 +441,15 @@ if __name__ == '__main__':
                             calculation_instance.update_variable_dict(key, val)
                             is_valid_input = True
                         else:
-                            print("\n========== Invalid input ==========")
-                expr_val = calculation_instance.evaluate_expression(updated_expr_list)
+                            print("\n========== Invalid input ==========\n")
+                expr_val = calculation_instance.evaluate_expression(updated_expr_list).get('final_value')
                 print()
                 print("===============================================================================================")
                 print("The value of expression {} : {}".format(" ".join(input_expr_list), expr_val))
                 print("===============================================================================================")
             elif choice in ["2", 2]:
-                print("===============================================================================================")
-                for key in sorted(expr_instance.get_variable_dict()):
-                    print('{:<8}'.format(key), end=' ')
-                print('{:<4}'.format('|'), end=' ')
-                print('{:<4}'.format(" ".join(input_expr_list)))
-                print("===============================================================================================")
                 calculation_instance.variable_dict = expr_instance.get_variable_dict()
-                equivalency = calculation_instance.calculate_truth_table_and_equivalence()
-                print("===============================================================================================")
-                print("Solution : ", equivalency)
-                print("===============================================================================================")
+                calculation_instance.calculate_truth_table_and_equivalence()
         elif choice in ["3", 3]:
             is_exit = True
         else:
