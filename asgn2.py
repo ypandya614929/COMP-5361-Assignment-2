@@ -182,13 +182,6 @@ def is_valid_expression(validation_expr_list=[]):
     return is_valid
 
 
-def generate_blank_str(count):
-    var = ""
-    for i in range((count+4)//2):
-        var += " "
-    return var
-
-
 class Equivalency:
     """
     A class used to represent all the calculations for expression evaluation and
