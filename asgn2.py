@@ -1,5 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+# References
+# https://stackoverflow.com/questions/53526207/how-do-i-add-a-row-of-dashes-between-the-first-two-print-lines-in-python
+# https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-56.php
+# https://rosettacode.org/wiki/Truth_table
+
 import collections
 
 # constants
@@ -376,11 +382,10 @@ class Equivalency:
                 res_list.append(PRINT_VALUE.get(value))
             print_list.append(res_list)
 
-        s = [[str(e) for e in row] for row in print_list]
-        lens = [max(map(len, col)) for col in zip(*s)]
-        fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
-        table = [fmt.format(*row) for row in s]
-        print('\n'.join(table))
+        dynamic_length = [max(map(len, colmn)) for colmn in zip(*[[str(word) for word in row] for row in print_list])]
+        tab_formatted = '\t'.join('{{:{}}}'.format(var) for var in dynamic_length)
+        display_table = [tab_formatted.format(*row) for row in [[str(word) for word in row] for row in print_list]]
+        print('\n'.join(display_table))
 
         result_set = set(result_list)
         expr_equivalency = "Contingency"
