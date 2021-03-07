@@ -204,29 +204,6 @@ class Equivalency:
         a dict which contains operand and it's truth values
     postfix_expr_display_list : list
         a list which contains postfix expression for display purpose
-
-    Methods
-    -------
-    __init__()
-        It is constructor for the class Equivalency
-    push(elem)
-        It takes elem as a single element of expression and stores into stack
-        which contains all expression data.
-    display_list_push(elem)
-        It takes elem as a single element of expression and stores into postfix_expr_display_list
-        which contains all postfix expression data for display purpose.
-    peek()
-    pop()
-    is_empty()
-    is_operand(var)
-    check_precedence(op)
-    update_variable_dict(key, val)
-    get_variable_dict()
-    update_postfix_expr_list(expr)
-    get_postfix_expr_list()
-    generate_expression(expr_list=[])
-    evaluate_expression(postfix_expr_list=[])
-    calculate_truth_table_and_equivalence()
     """
 
     def __init__(self):
@@ -260,30 +237,81 @@ class Equivalency:
         self.postfix_expr_display_list.append(elem)
 
     def peek(self):
+        """It returns top most element from the stack, if stack is empty,
+        it returns 0. Element is still stored in stack, it's not removed.
+
+        Returns
+        -------
+        str
+            return Top element, if empty then returns 0
+        """
         if self.is_empty():
             return 0
         return self.stack[-1]
 
     def pop(self):
+        """It returns top most element from the stack, if stack is empty,
+        it returns 0. Returned element is removed from the stack.
+
+        Returns
+        -------
+        str
+            return Top element, if empty then returns 0
+        """
         if self.is_empty():
             return 0
         return self.stack.pop()
 
     def display_list_pop(self):
+        """It returns top most element from the postfix_expr_display_list, if postfix_expr_display_list is empty,
+        it returns 0. Returned element is removed from the postfix_expr_display_list for display purpose.
+
+        Returns
+        -------
+        str
+            return Top element, if empty then returns 0
+        """
         if not self.postfix_expr_display_list:
             return 0
         return self.postfix_expr_display_list.pop()
 
     def display_list_peek(self):
+        """It returns top most element from the postfix_expr_display_list, if postfix_expr_display_list is empty,
+        it returns 0. Element is still stored in postfix_expr_display_list, it's not removed. postfix_expr_display_list
+        is used for storing expression element for display purpose.
+
+        Returns
+        -------
+        str
+            return Top element, if empty then returns 0
+        """
         if not self.postfix_expr_display_list:
             return 0
         return self.postfix_expr_display_list[-1]
 
     def is_empty(self):
+        """It checks if stack is empty or not and returns boolean value.
+
+        Returns
+        -------
+        boolean
+            return True if stack is empty, False otherwise
+        """
         return self.stack == []
 
     @staticmethod
     def is_operand(var):
+        """It checks if var is operand/variable or not and returns boolean value.
+        Parameters
+        ----------
+        var : str
+            single element from the expression
+
+        Returns
+        -------
+        boolean
+            return True if var is operand, False otherwise
+        """
         if type(var) == bool:
             return True
         if is_operator(var):
@@ -291,6 +319,18 @@ class Equivalency:
         return var.isalnum() or var.isalpha()
 
     def check_precedence(self, op):
+        """It compares the precedence of given operand with the top element from the stack.
+        Parameters
+        ----------
+        op : str
+            single element from the expression
+
+        Returns
+        -------
+        boolean
+            return True if op precedence is less or equal to the precedence of the top element from the stack,
+            False otherwise
+        """
         if self.peek() in ['(']:
             return False
         if (PRECEDENCE_MAPPING[op]) <= PRECEDENCE_MAPPING[self.peek()]:
@@ -298,18 +338,52 @@ class Equivalency:
         return False
 
     def update_variable_dict(self, key, val=None):
+        """It stores/updates the operand and boolean value of the operand in the dictionary.
+        Parameters
+        ----------
+        key : str
+            single operand from the expression
+        val : bool
+            boolean value of the operand
+        """
         self.variable_dict.update({key: val})
 
     def get_variable_dict(self):
+        """It is used to get the variable dictionary which contains operand as key and operand's boolean value
+
+        Returns
+        -------
+        dict
+            return the variable dictionary which contains operand as key and operand's boolean value
+        """
         return self.variable_dict
 
     def update_postfix_expr_list(self, expr):
+        """It stores/updates the element inside the postfix expression list from the user's input expression.
+        Parameters
+        ----------
+        expr : str
+            single element from the expression
+        """
         self.postfix_expr_list.append(expr)
 
     def get_postfix_expr_list(self):
+        """It is used to get postfix expression list.
+
+        Returns
+        -------
+        list
+            return the postfix expression list
+        """
         return self.postfix_expr_list
 
     def generate_expression(self, expr_list=[]):
+        """It is used to generate the postfix expression as a list from the input infix expression by the user.
+        Parameters
+        ----------
+        expr_list : list
+            It contains infix elements from the user's input as a list.
+        """
         for key in expr_list:
             if key in POSITIVE_VALUES:
                 key = True
@@ -336,6 +410,19 @@ class Equivalency:
             self.update_postfix_expr_list(self.pop())
 
     def evaluate_expression(self, postfix_expr_list=[]):
+        """It is used to evaluate the postfix expression based on the assigned Truth values to the operands of the
+        postfix elements
+        Parameters
+        ----------
+        postfix_expr_list : list
+            It contains postfix elements as a list.
+
+        Returns
+        -------
+        dict
+            return the dictionary containing result of the postfix expression, result of each sub sequent step, and
+            expression and sub-expression formatted.
+        """
         result_dict = collections.OrderedDict()
         for exp in postfix_expr_list:
             if self.is_operand(exp):
@@ -375,6 +462,9 @@ class Equivalency:
         return result_dict
 
     def calculate_truth_table_and_equivalence(self):
+        """It is used to calculate truth table based on possible combinations of truth values for operands and display
+        result in a tabular form. This function also evaluates the Tautology, Contingency and Contradiction.
+        """
         variable_list = sorted(self.get_variable_dict().keys())
         table_length = 2 ** len(variable_list)
         result_list = []
@@ -442,7 +532,9 @@ if __name__ == '__main__':
             expr = input("\nPlease enter valid propositional logic equation : ")
             for op in LIST_OF_OPERATORS:
                 expr = expr.replace(op, " " + op + " ")
-            input_expr_list = expr.replace(")", " ) ").replace("(", " ( ").split()
+            expr = expr.replace(")", " ) ")
+            expr = expr.replace("(", " ( ")
+            input_expr_list = expr.split()
             if not is_valid_expression(input_expr_list):
                 print("\n========== Invalid input ==========")
                 continue

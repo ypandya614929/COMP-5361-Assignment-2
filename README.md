@@ -17,8 +17,8 @@ COMP-5361-Assignment-2
 
 ## Available Operand (Variable) Values:
 
-    NEGATIVE_VALUES = F, f, False, false, 0
-    POSITIVE_VALUES = T, t, True, true, 1
+    NEGATIVE VALUES = F, f, False, false, 0
+    POSITIVE VALUES = T, t, True, true, 1
 
 
 ## Run Program
