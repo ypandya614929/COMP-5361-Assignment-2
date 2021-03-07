@@ -7,6 +7,15 @@ COMP-5361-Assignment-2
     source env/bin/activate
     pip install -r requirements.txt
 
+## Available Operators
+
+    NEGATION OPERATORS = ¬, ~, !
+    CONJUNCTION OPERATORS = ∧, ^, &
+    DISJUNCTION OPERATORS = ∨, v, |, V
+    EX-OR OPERATORS = ⊕
+    CONDITIONAL OPERATORS = =>, ->, →
+    BI-CONDITIONAL OPERATORS = ↔
+
 ## Run Program
 #### python asgn2.py
     
