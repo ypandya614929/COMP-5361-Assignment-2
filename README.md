@@ -6,6 +6,21 @@ COMP-5361-Assignment-2
     virtualenv -p python3.6 env
     source env/bin/activate
 
+## Available Operators
+
+    NEGATION OPERATORS = ¬, ~, !
+    CONJUNCTION OPERATORS = ∧, ^, &
+    DISJUNCTION OPERATORS = ∨, v, |, V
+    EX-OR OPERATORS = ⊕
+    CONDITIONAL OPERATORS = =>, ->, →
+    BI-CONDITIONAL OPERATORS = ↔
+
+## Available Operand (Variable) Values:
+
+    NEGATIVE_VALUES = F, f, False, false, 0
+    POSITIVE_VALUES = T, t, True, true, 1
+
+
 ## Run Program
 #### python asgn2.py
     
