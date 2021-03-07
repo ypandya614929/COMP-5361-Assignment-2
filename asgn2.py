@@ -6,6 +6,7 @@
 # https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-56.php
 # https://rosettacode.org/wiki/Truth_table
 
+
 import collections
 
 # constants
@@ -201,12 +202,19 @@ class Equivalency:
         a list which contains the expression data in postfix order
     variable_dict : dict
         a dict which contains operand and it's truth values
+    postfix_expr_display_list : list
+        a list which contains postfix expression for display purpose
 
     Methods
     -------
     __init__()
-        It is a general printing method that beautifies print(statement
+        It is constructor for the class Equivalency
     push(elem)
+        It takes elem as a single element of expression and stores into stack
+        which contains all expression data.
+    display_list_push(elem)
+        It takes elem as a single element of expression and stores into postfix_expr_display_list
+        which contains all postfix expression data for display purpose.
     peek()
     pop()
     is_empty()
@@ -222,15 +230,33 @@ class Equivalency:
     """
 
     def __init__(self):
+        """It is constructor for the class Equivalency
+        """
         self.stack = []
         self.postfix_expr_list = []
         self.variable_dict = {}
         self.postfix_expr_display_list = []
 
     def push(self, elem):
+        """It takes elem as a single element of expression and stores into stack
+        which contains all expression data.
+        Parameters
+        ----------
+        elem : str
+            single element of expression is stored
+
+        """
         self.stack.append(elem)
 
     def display_list_push(self, elem):
+        """It takes elem as a single element of expression and stores into postfix_expr_display_list
+        which contains all postfix expression data for display purpose.
+        Parameters
+        ----------
+        elem : str
+            single element of postfix expression is stored
+
+        """
         self.postfix_expr_display_list.append(elem)
 
     def peek(self):
