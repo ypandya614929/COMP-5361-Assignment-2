@@ -10,8 +10,9 @@
 import collections
 
 # constants
-LIST_OF_OPERATORS = ["¬", "~", "!", "∧", "^", "&", "∨", "v", "|", "V", "=>", "->", "→", "↔", "⊕"]
+LIST_OF_OPERATORS = ["¬", "~", "!", "∧", "^", "&", "∨", "v", "|", "V", "=>", "->", "→", "↔", "⊕", "~~", "!!", "¬¬"]
 NEGATION_OPERATORS = ["¬", "~", "!"]
+DOUBLE_NEGATION_OPERATORS = ["~~", "!!", "¬¬"]
 CONJUNCTION_OPERATORS = ["∧", "^", "&"]
 DISJUNCTION_OPERATORS = ["∨", "v", "|", "V"]
 EX_OR_OPERATORS = ["⊕"]
@@ -148,6 +149,20 @@ def calculate_ex_or(op1, op2):
     return not (op1 == op2)
 
 
+def calculate_double_negation(op):
+    """It takes one operand and return it's double negation boolean value (value itself)
+    Parameters
+    ----------
+    op : bool
+        The bool class object
+    Returns
+    -------
+    bool
+        return True if op1 is True, False otherwise
+    """
+    return op
+
+
 def is_valid_expression(validation_expr_list=[]):
     """It takes list of string/character values from the expression and returns
     boolean value based on the expression is valid or not
@@ -165,7 +180,14 @@ def is_valid_expression(validation_expr_list=[]):
     operators_count = 0
     last_exp = None
     is_valid = False
-    if len(validation_expr_list) > 2:
+    is_double_negation = False
+
+    for exp in validation_expr_list:
+        if exp in DOUBLE_NEGATION_OPERATORS:
+            is_double_negation = True
+            break
+
+    if (len(validation_expr_list) > 2) or is_double_negation:
         for exp in validation_expr_list:
             if exp == "(":
                 parenthesis_count += 1
@@ -173,9 +195,9 @@ def is_valid_expression(validation_expr_list=[]):
                 parenthesis_count -= 1
                 if parenthesis_count < 0:
                     break
-            elif is_operator(exp) and (exp not in NEGATION_OPERATORS):
+            elif is_operator(exp) and ((exp not in NEGATION_OPERATORS) or (exp not in DOUBLE_NEGATION_OPERATORS)):
                 if last_exp and is_operator(last_exp):
-                    if last_exp in NEGATION_OPERATORS:
+                    if (last_exp in NEGATION_OPERATORS) or (last_exp in DOUBLE_NEGATION_OPERATORS):
                         break
                 else:
                     operators_count -= 1
@@ -186,6 +208,7 @@ def is_valid_expression(validation_expr_list=[]):
             last_exp = exp
         if parenthesis_count == 0:
             is_valid = True
+
     return is_valid
 
 
@@ -424,17 +447,20 @@ class Equivalency:
             expression and sub-expression formatted.
         """
         result_dict = collections.OrderedDict()
-        for exp in postfix_expr_list:
+        for i, exp in enumerate(postfix_expr_list):
             if self.is_operand(exp):
                 self.display_list_push(str(exp))
                 if type(exp) != bool:
                     exp = self.get_variable_dict().get(exp)
                 self.push(exp)
             else:
-                if exp in NEGATION_OPERATORS:
+                if (exp in NEGATION_OPERATORS) or (exp in DOUBLE_NEGATION_OPERATORS):
                     op1 = self.pop()
                     display_op1 = self.display_list_pop()
-                    val = calculate_negation(op1)
+                    if exp in NEGATION_OPERATORS:
+                        val = calculate_negation(op1)
+                    if exp in DOUBLE_NEGATION_OPERATORS:
+                        val = calculate_double_negation(op1)
                     self.display_list_push('{}{}'.format(exp, display_op1))
                     result_dict.update({'{}{}'.format(exp, display_op1): val})
                     self.push(val)
@@ -530,11 +556,19 @@ if __name__ == '__main__':
         choice = choice.strip()
         if choice in ["1", 1, "2", 2]:
             expr = input("\nPlease enter valid propositional logic equation : ")
+
+            TEMP_SYMBOL_DOUBLE_NEGATION = "$"
+            for op in DOUBLE_NEGATION_OPERATORS:
+                expr = expr.replace(op, " " + TEMP_SYMBOL_DOUBLE_NEGATION + " ")
+
             for op in LIST_OF_OPERATORS:
                 expr = expr.replace(op, " " + op + " ")
+
+            expr = expr.replace(TEMP_SYMBOL_DOUBLE_NEGATION, " {} ".format(DOUBLE_NEGATION_OPERATORS[0]))
             expr = expr.replace(")", " ) ")
             expr = expr.replace("(", " ( ")
             input_expr_list = expr.split()
+
             if not is_valid_expression(input_expr_list):
                 print("\n========== Invalid input ==========")
                 continue

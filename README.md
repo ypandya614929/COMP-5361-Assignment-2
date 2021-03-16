@@ -14,6 +14,7 @@ COMP-5361-Assignment-2
     EX-OR OPERATORS = ⊕
     CONDITIONAL OPERATORS = =>, ->, →
     BI-CONDITIONAL OPERATORS = ↔
+    DOUBLE_NEGATION_OPERATORS = "~~", "!!", "¬¬"
 
 ## Available Operand (Variable) Values:
 
